@@ -25,7 +25,7 @@ struct Stats: ParsableCommand {
             let trendPct  = String(format: "%+.1f%%", stats.marketTrend * 100) 
 
             print("""
-             \(stats.readyToHarvest)/\(stats.totalPlots) ready \
+             \(stats.readyToHarvest)/\(stats.totalPlots) ready
             󰜦 \(stats.inventoryCrops) crops in inventory
             󰹢 \(stats.inventorySeeds) seeds in inventory
              \(stats.coins) coins in wallet
