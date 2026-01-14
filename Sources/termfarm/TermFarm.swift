@@ -9,6 +9,7 @@ struct TermFarm: ParsableCommand {
             Stats.self,
             Market.self,
             Buy.self,
+            Plant.self,
         ]
     )
 }
