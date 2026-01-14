@@ -33,7 +33,7 @@ struct Plant: ParsableCommand {
             farm.inventory.seeds.removeValue(forKey: seedID)        
         }
 
-        farm.lastUpdates = Date()
+        farm.lastUpdated = Date()
         try saveFarm(farm)
 
         print("󰜐 Planted \(seedID)")
