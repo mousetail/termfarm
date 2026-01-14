@@ -24,3 +24,9 @@ You can easily install **termfarm** through *Homebrew* on **Linux** and **macOS*
 ```zsh
 brew install stikypiston/formulae/termfarm
 ```
+
+Then, run the following command to create a **save file** with some coins that you'll need in order to buy seeds:
+
+```zsh
+termfarm init
+```
