@@ -14,6 +14,9 @@
 
 - The ability to **expand your farm** by purchasing new *plots* to plant crops on
 
+>[!INFO]
+>Plot purchasing is currently *not implemented*, although it will be soon!
+
 ## Installation
 
 You can easily install **termfarm** through *Homebrew* on **Linux** and **macOS**. Just run the command below.
