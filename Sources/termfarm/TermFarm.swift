@@ -6,7 +6,8 @@ struct TermFarm: ParsableCommand {
         abstract: "A terminal idle farming game",
         subcommands: [
             Init.self,
-            Stats.self
+            Stats.self,
+            Market.self,
         ]
     )
 }

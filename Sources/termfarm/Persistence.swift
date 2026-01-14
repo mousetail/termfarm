@@ -14,9 +14,12 @@ func saveURL() -> URL {
 
 func loadFarm() throws -> FarmState {
     let url = saveURL()
-        let data = try Data(contentsOf: url)
+    let data = try Data(contentsOf: url)
+    var farm = try JSONDecoder().decode(FarmState.self, from: data)
 
-        return try JSONDecoder().decode(FarmState.self, from: data)
+    updateMarketIfNeeded(farm: &farm)
+
+    return farm
 }
 
 func saveFarm(_ farm: FarmState) throws {
