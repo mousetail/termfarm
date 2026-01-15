@@ -12,10 +12,7 @@
 - A **stats** subcommand showing useful stats about the current state of your farm.
     - You can even add it to your `.zshrc` or `.bashrc` to see the status of your farm whenever you open a terminal!
 
-- The ability to **expand your farm** by purchasing new *plots* to plant crops on
-
->[!INFO]
->Plot purchasing is currently *not implemented*, although it will be soon!
+- The ability to **expand your farm** by purchasing new *plots* to plant crops on, using the `termfarm buyplot` command. The price of a plot increases with each purchase
 
 ## Installation
 
