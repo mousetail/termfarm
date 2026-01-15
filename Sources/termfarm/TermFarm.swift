@@ -13,6 +13,7 @@ struct TermFarm: ParsableCommand {
             Harvest.self,
             InventoryCommand.self,
             Sell.self,
+            BuyPlotCommand.self,
         ]
     )
 }
