@@ -10,7 +10,7 @@ struct View: ParsableCommand {
         let farm = try loadFarm()
         let now  = Date()
 
-        print("  Plots") // TODO: Add nerd font icon
+        print(" Plots")
         print("-------")
 
         for (index, plot) in farm.plots.enumerated() {

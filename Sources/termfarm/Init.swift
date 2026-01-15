@@ -16,6 +16,6 @@ struct Init: ParsableCommand {
         )
 
         try saveFarm(farm)
-        print("termfarm save file initialised!") // TODO: Add a nerd font icon
+        print("󰉉 termfarm save file initialised!")
     }
 }
