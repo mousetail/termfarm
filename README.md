@@ -6,7 +6,7 @@
 
 - A *rotating market* with various crop seeds to purchase, with fluctuating prices.
 
->[!INFO]
+>[!NOTE]
 >The shop rotates every **four hours**
 
 - A **stats** subcommand showing useful stats about the current state of your farm.
