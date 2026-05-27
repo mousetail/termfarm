@@ -2,7 +2,7 @@
 
 **termfarm** is a simple CLI idle farming game written in *Swift*.
 
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/StikyPiston/termfarm)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/indium114/termfarm)
 
 ## Features
 
