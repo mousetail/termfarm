@@ -43,6 +43,6 @@ struct Buy: ParsableCommand {
 
         try saveFarm(farm)
 
-        print("󰄐 Bought \(amount)x \(seedID) seeds for \(totalCost) coins (\(unitPrice) each)")
+        print("󰄐 Bought \(amount)x \(crop.icon) \(seedID) seeds for \(totalCost) coins (\(unitPrice) each)")
     }
 }
