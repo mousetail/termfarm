@@ -30,12 +30,14 @@ struct Plant: ParsableCommand {
         farm.inventory.seeds[seedID]! -= 1
 
         if farm.inventory.seeds[seedID] == 0 {
-            farm.inventory.seeds.removeValue(forKey: seedID)        
+            farm.inventory.seeds.removeValue(forKey: seedID)
         }
 
         farm.lastUpdated = Date()
         try saveFarm(farm)
 
-        print("󰜐 Planted \(seedID)")
+        let crop = cropRegistry[seedID]!
+
+        print("󰜐 Planted \(crop.icon) \(seedID)")
     }
 }
