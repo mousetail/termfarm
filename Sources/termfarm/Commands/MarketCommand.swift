@@ -11,6 +11,8 @@ struct Market: ParsableCommand {
 
         print("󰄐 Seed Market")
         print("-------------")
+        print(" Balance: \(farm.coins)")
+        print("-------------")
         print()
 
         for seed in farm.market.availableSeeds {
