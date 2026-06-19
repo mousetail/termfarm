@@ -8,6 +8,7 @@ struct Market: ParsableCommand {
 
     func run() throws {
         let farm = try loadFarm()
+        try saveFarm(farm)
         let stats = computeStats(farm: farm)
 
         print("󰄐 Seed Market")
