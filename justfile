@@ -1,8 +1,5 @@
-debug:
-    swift build --configuration debug
-
 build:
-    swift build --configuration release
+    nix build .#termfarm
 
-clean:
-    swift package reset
+run:
+    cargo run
