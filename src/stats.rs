@@ -1,9 +1,5 @@
 use serde::{Deserialize, Serialize};
-use std::{
-    arch::x86_64::_SIDD_CMP_EQUAL_ANY,
-    cmp::max_by,
-    time::{Duration, SystemTime},
-};
+use std::time::Duration;
 
 use crate::{crops::crop_registry, models::FarmState};
 
@@ -44,12 +40,12 @@ pub fn compute_stats(farm: &FarmState) -> FarmStats {
         .inventory
         .crops
         .as_ref()
-        .map_or(0, |map| map.values().fold(0, |f, &x| f + x));
+        .map_or(0, |map| map.values().sum::<u16>());
     let seeds = farm
         .inventory
         .seeds
         .as_ref()
-        .map_or(0, |map| map.values().fold(0, |f, &x| f + x));
+        .map_or(0, |map| map.values().sum::<u16>());
 
     fn trend(farm: &FarmState) -> f64 {
         let values = farm.market.price_modifiers.values();
@@ -71,11 +67,11 @@ pub fn compute_stats(farm: &FarmState) -> FarmStats {
     FarmStats {
         ready_to_harvest: ready,
         growing_crops: growing,
-        total_plots: farm.plots.iter().count() as u16,
+        total_plots: farm.plots.len() as u16,
         inventory_crops: crops.to_owned(),
         inventory_seeds: seeds.to_owned(),
         coins: farm.coins,
-        market_trend: trend(&farm),
+        market_trend: trend(farm),
         next_market_rotation_in: Duration::from_secs_f64(remaining),
     }
 }

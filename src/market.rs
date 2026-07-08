@@ -18,8 +18,7 @@ pub fn generate_market() -> MarketState {
     all_seeds.shuffle(&mut rng);
     let selection: Vec<String> = all_seeds
         .into_iter()
-        .cloned()
-        .take(MARKET_MAX_ITEMS)
+        .take(MARKET_MAX_ITEMS).cloned()
         .collect();
 
     let mut modifiers: HashMap<String, f64> = HashMap::new();
@@ -31,7 +30,7 @@ pub fn generate_market() -> MarketState {
     }
 
     MarketState {
-        available_seeds: selection.iter().cloned().collect(),
+        available_seeds: selection.to_vec(),
         price_modifiers: modifiers,
         last_rotation: SystemTime::now(),
     }

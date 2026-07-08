@@ -18,7 +18,7 @@ pub fn sell(crop_id: String, mut amount: u16) {
         println!("You don't have any {crop_id} to sell");
         exit(1);
     }
-    if amount <= 0 {
+    if amount == 0 {
         usefulog::err("Invalid amount");
         exit(1);
     }

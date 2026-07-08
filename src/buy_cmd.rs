@@ -9,7 +9,7 @@ pub fn buy(seed_id: String, amount: u16) {
     let mut farm = load_farm();
     let registry = crop_registry();
 
-    if amount <= 0 {
+    if amount == 0 {
         usefulog::err("amount must be greater than 0");
         exit(1);
     }

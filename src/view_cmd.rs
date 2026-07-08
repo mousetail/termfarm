@@ -2,7 +2,7 @@ use colorize::AnsiColor;
 use humantime::format_duration;
 
 use crate::{crops::crop_registry, persistence::load_farm};
-use std::time::{Duration, SystemTime};
+use std::time::Duration;
 
 pub fn view() {
     let farm = load_farm();
@@ -15,7 +15,7 @@ pub fn view() {
         let plot_number = index + 1;
 
         match plot.planted_crop.clone() {
-            Some(crop_id) => match plot.planted_at.clone() {
+            Some(crop_id) => match plot.planted_at {
                 Some(at) => {
                     let crop = &registry[&crop_id];
                     let elapsed = at.elapsed().unwrap();

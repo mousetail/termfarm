@@ -1,5 +1,4 @@
 use crate::{market::update_market_if_needed, models::FarmState};
-use dirs;
 use std::fs;
 
 pub fn save_path() -> String {
@@ -22,7 +21,7 @@ pub fn load_farm() -> FarmState {
 
     update_market_if_needed(&mut farm);
 
-    return farm;
+    farm
 }
 
 pub fn save_farm(farm: &FarmState) -> bool {

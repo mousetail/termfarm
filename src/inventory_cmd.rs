@@ -19,7 +19,7 @@ pub fn inventory() {
         None => println!(" none"),
     }
 
-    println!("");
+    println!();
     println!(" Crops:");
 
     match farm.inventory.crops {

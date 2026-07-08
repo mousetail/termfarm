@@ -10,7 +10,7 @@ use std::{process::exit, time::SystemTime};
 pub fn buyplot(showprice: bool) {
     let mut farm = load_farm();
 
-    let current_plots = farm.plots.iter().count();
+    let current_plots = farm.plots.len();
     let price = next_plot_price(current_plots as u16);
 
     if showprice {
@@ -37,7 +37,7 @@ pub fn buyplot(showprice: bool) {
     match save_farm(&farm) {
         true => {
             println!("Bought new plot for {price}");
-            println!("Total plots is now {}", farm.plots.iter().count())
+            println!("Total plots is now {}", farm.plots.len())
         }
         false => {
             usefulog::err("failed to save farm");
