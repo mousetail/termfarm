@@ -8,6 +8,7 @@ mod plot_pricing;
 mod stats;
 
 mod init_cmd;
+mod market_cmd;
 mod stats_cmd;
 
 static VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -56,7 +57,7 @@ fn main() {
             stats_cmd::stats();
         }
         Commands::Market => {
-            todo!()
+            market_cmd::market();
         }
         Commands::Buy { seed_id, amount } => {
             todo!()
