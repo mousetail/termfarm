@@ -4,9 +4,9 @@ use uuid::Uuid;
 
 #[derive(Deserialize, Serialize)]
 pub struct CropType {
-    pub icon: String,
-    pub id: String,
-    pub grow_time: String,
+    pub icon: &'static str,
+    pub id: &'static str,
+    pub grow_time: u16,
     pub base_buy_price: u16,
     pub base_sell_price: u16,
 }

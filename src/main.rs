@@ -1,8 +1,10 @@
 use clap::{Parser, Subcommand};
 
+mod crops;
 mod models;
 mod persistence;
 mod plot_pricing;
+mod stats;
 
 static VERSION: &str = env!("CARGO_PKG_VERSION");
 
