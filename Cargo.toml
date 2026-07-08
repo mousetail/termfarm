@@ -4,6 +4,8 @@ version = "2.0.0"
 edition = "2024"
 description = "A terminal idle farming game"
 license = "MIT"
+repository = "https://github.com/indium114/termfarm"
+homepage = "https://github.com/indium114/termfarm"
 
 [dependencies]
 clap = { version = "4.6.1", features = ["derive"] }
