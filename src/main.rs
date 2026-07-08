@@ -13,6 +13,7 @@ mod init_cmd;
 mod inventory_cmd;
 mod market_cmd;
 mod plant_cmd;
+mod sell_cmd;
 mod stats_cmd;
 mod view_cmd;
 
@@ -44,7 +45,10 @@ enum Commands {
     /// List the contents of your inventory
     Inventory,
     /// Sell crops from your inventory
-    Sell { seed_id: String, amount: u16 },
+    Sell {
+        crop_id: String,
+        amount: Option<u16>,
+    },
     /// Buy a new plot
     BuyPlot,
     /// View the status of farm plots
@@ -76,8 +80,8 @@ fn main() {
         Commands::Inventory => {
             inventory_cmd::inventory();
         }
-        Commands::Sell { seed_id, amount } => {
-            todo!()
+        Commands::Sell { crop_id, amount } => {
+            sell_cmd::sell(crop_id.to_string(), amount.unwrap_or(0));
         }
         Commands::BuyPlot => {
             todo!()
