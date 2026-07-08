@@ -26,6 +26,9 @@ pub fn init() {
 
     match save_farm(&farm) {
         true => println!("󰉉 termfarm save file initialised!"),
-        false => panic!("failed to save farm"),
+        false => {
+            usefulog::err("failed to save farm");
+            std::process::exit(1);
+        },
     }
 }

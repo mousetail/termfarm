@@ -11,7 +11,10 @@ pub fn market() {
     let farm = load_farm();
     match save_farm(&farm) {
         true => (),
-        false => panic!("failed to save farm"),
+        false => {
+            usefulog::err("failed to save farm");
+            std::process::exit(1);
+        }
     };
     let stats = compute_stats(&farm);
 
