@@ -12,7 +12,7 @@ pub fn buy(seed_id: String, amount: u16) {
     if amount <= 0 {
         usefulog::err("amount must be greater than 0");
         exit(1);
-    };
+    }
     if !registry.contains_key(&seed_id) {
         usefulog::err(format!("Unknown seed: {seed_id}"));
         exit(1);
