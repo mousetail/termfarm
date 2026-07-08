@@ -8,6 +8,7 @@ mod plot_pricing;
 mod stats;
 
 mod buy_cmd;
+mod buyplot_cmd;
 mod harvest_cmd;
 mod init_cmd;
 mod inventory_cmd;
@@ -50,7 +51,10 @@ enum Commands {
         amount: Option<u16>,
     },
     /// Buy a new plot
-    BuyPlot,
+    BuyPlot {
+        #[arg(long)]
+        showprice: bool,
+    },
     /// View the status of farm plots
     View,
 }
@@ -83,8 +87,8 @@ fn main() {
         Commands::Sell { crop_id, amount } => {
             sell_cmd::sell(crop_id.to_string(), amount.unwrap_or(0));
         }
-        Commands::BuyPlot => {
-            todo!()
+        Commands::BuyPlot { showprice } => {
+            buyplot_cmd::buyplot(*showprice);
         }
         Commands::View => {
             view_cmd::view();
