@@ -6,7 +6,7 @@ pub fn save_path() -> String {
     let home = dirs::home_dir()
         .map(|p| p.to_string_lossy().into_owned())
         .unwrap_or_default();
-    let dir = home + ".local/share/termfarm";
+    let dir = home + "/.local/share/termfarm";
 
     _ = fs::create_dir_all(&dir);
 
