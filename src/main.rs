@@ -1,10 +1,14 @@
 use clap::{Parser, Subcommand};
 
 mod crops;
+mod market;
 mod models;
 mod persistence;
 mod plot_pricing;
 mod stats;
+
+mod init_cmd;
+mod stats_cmd;
 
 static VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -49,7 +53,7 @@ fn main() {
             todo!()
         }
         Commands::Stats => {
-            todo!()
+            stats_cmd::stats();
         }
         Commands::Market => {
             todo!()
