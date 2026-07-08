@@ -11,6 +11,7 @@ mod buy_cmd;
 mod init_cmd;
 mod inventory_cmd;
 mod market_cmd;
+mod plant_cmd;
 mod stats_cmd;
 mod view_cmd;
 
@@ -66,7 +67,7 @@ fn main() {
             buy_cmd::buy(seed_id.to_string(), *amount);
         }
         Commands::Plant { seed_id } => {
-            todo!()
+            plant_cmd::plant(seed_id.to_string());
         }
         Commands::Harvest => {
             todo!()
