@@ -12,6 +12,7 @@ mod init_cmd;
 mod inventory_cmd;
 mod market_cmd;
 mod stats_cmd;
+mod view_cmd;
 
 static VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -80,7 +81,7 @@ fn main() {
             todo!()
         }
         Commands::View => {
-            todo!()
+            view_cmd::view();
         }
     }
 }
