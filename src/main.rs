@@ -7,6 +7,7 @@ mod persistence;
 mod plot_pricing;
 mod stats;
 
+mod buy_cmd;
 mod init_cmd;
 mod inventory_cmd;
 mod market_cmd;
@@ -61,7 +62,7 @@ fn main() {
             market_cmd::market();
         }
         Commands::Buy { seed_id, amount } => {
-            todo!()
+            buy_cmd::buy(seed_id.to_string(), *amount);
         }
         Commands::Plant { seed_id } => {
             todo!()
