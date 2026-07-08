@@ -1,8 +1,5 @@
-debug:
-    swift build --configuration debug
-
 build:
-    swift build --configuration release
+    nix build .#example # TODO: Change
 
-clean:
-    swift package reset
+run:
+    go run .
