@@ -1,4 +1,4 @@
-use crate::models::FarmState;
+use crate::{market::update_market_if_needed, models::FarmState};
 use dirs;
 use std::fs;
 
@@ -20,7 +20,7 @@ pub fn load_farm() -> FarmState {
         .and_then(|s| serde_json::from_str(&s).ok())
         .unwrap();
 
-    // TODO: update_market_if_needed(&farm)
+    update_market_if_needed(&mut farm);
 
     return farm;
 }

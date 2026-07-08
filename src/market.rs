@@ -1,5 +1,5 @@
 use crate::crops::crop_registry;
-use crate::models::MarketState;
+use crate::models::{FarmState, MarketState};
 use rand::RngExt;
 use rand::seq::SliceRandom;
 use std::collections::HashMap;
@@ -24,7 +24,10 @@ pub fn generate_market() -> MarketState {
 
     let mut modifiers: HashMap<String, f64> = HashMap::new();
     for seed in &selection {
-        modifiers.insert(seed.to_string(), rng.random_range(PRICE_MODIFIER_RANGE.clone()));
+        modifiers.insert(
+            seed.to_string(),
+            rng.random_range(PRICE_MODIFIER_RANGE.clone()),
+        );
     }
 
     MarketState {
@@ -32,4 +35,19 @@ pub fn generate_market() -> MarketState {
         price_modifiers: modifiers,
         last_rotation: SystemTime::now(),
     }
+}
+
+pub fn update_market_if_needed(farm: &mut FarmState) {
+    if farm
+        .market
+        .last_rotation
+        .elapsed()
+        .map(|d| d.as_secs_f64())
+        .unwrap_or(0.0)
+        < MARKET_ROTATION_INTERVAL
+    {
+        return;
+    };
+
+    farm.market = generate_market();
 }
