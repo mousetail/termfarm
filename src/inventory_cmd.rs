@@ -6,7 +6,6 @@ pub fn inventory() {
 
     println!("󰜦 Inventory:");
     println!("------------");
-    println!("");
     println!(" Coins: {}", farm.coins);
     println!("󰹢 Seeds:");
 
