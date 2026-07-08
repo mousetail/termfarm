@@ -51,3 +51,17 @@ pub fn update_market_if_needed(farm: &mut FarmState) {
 
     farm.market = generate_market();
 }
+
+pub fn buy_price(crop_id: String, farm: &FarmState) -> u16 {
+    let registry = crop_registry();
+    let crop = &registry[&crop_id];
+    let modifier = farm.market.price_modifiers[&crop_id];
+    ((crop.base_buy_price as f64) * modifier) as u16
+}
+
+pub fn sell_price(crop_id: String, farm: &FarmState) -> u16 {
+    let registry = crop_registry();
+    let crop = &registry[&crop_id];
+    let modifier = farm.market.price_modifiers[&crop_id];
+    ((crop.base_sell_price as f64) * modifier) as u16
+}
