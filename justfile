@@ -1,5 +1,5 @@
 build:
-    nix build .#example # TODO: Change
+    nix build .#termfarm
 
 run:
-    go run .
+    cargo run

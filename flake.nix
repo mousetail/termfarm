@@ -24,18 +24,18 @@
           ];
         };
 
-        packages.example = pkgs.rustPlatform.buildRustPackage {
-          name = "example"; # TODO: Change
-          version = "0.1.0"; # TODO: Change
+        packages.termfarm = pkgs.rustPlatform.buildRustPackage {
+          name = "termfarm";
+          version = "2.0.0";
 
           src = ./.;
 
           cargoLock.lockFile = ./Cargo.lock;
         };
 
-        apps.example = {
+        apps.termfarm = {
           type = "app";
-          program = "${self.packages.${pkgs.stdenv.hostPlatform.system}.example}/bin/example"; # TODO: Change
+          program = "${self.packages.${pkgs.stdenv.hostPlatform.system}.termfarm}/bin/termfarm";
         };
       });
 }
