@@ -18,7 +18,7 @@ pub struct Plot {
     pub planted_at: Option<SystemTime>,
 }
 
-#[derive(Deserialize, Serialize, Default)]
+#[derive(Deserialize, Serialize)]
 pub struct Inventory {
     pub crops: HashMap<String, u16>,
     pub seeds: HashMap<String, u16>,
