@@ -27,8 +27,14 @@ pub fn stats() {
         stats.ready_to_harvest, total_planted, stats.total_plots
     )
     .green();
-    let inventory_crops = format!("󰜦 {} crops in inventory", stats.inventory_crops).blue();
-    let inventory_seeds = format!("󰹢 {} seeds in inventory", stats.inventory_seeds).cyan();
+    let inventory_crops = match stats.inventory_crops {
+        1 => format!("󰜦 {} crop in inventory", stats.inventory_crops).blue(),
+        _ => format!("󰜦 {} crops in inventory", stats.inventory_crops).blue(),
+    };
+    let inventory_seeds = match stats.inventory_seeds {
+        1 => format!("󰹢 {} seed in inventory", stats.inventory_seeds).cyan(),
+        _ => format!("󰹢 {} seeds in inventory", stats.inventory_seeds).cyan(),
+    };
     let wallet = match stats.coins {
         1 => format!(" {} coin in wallet", stats.coins).yellow(),
         _ => format!(" {} coins in wallet ", stats.coins).yellow(),
