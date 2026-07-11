@@ -1,4 +1,4 @@
-use std::time::{Duration, Instant};
+use std::time::Duration;
 
 use crate::{crops::crop_registry, models::FarmState, persistence};
 use humantime::format_duration;
