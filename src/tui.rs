@@ -1,4 +1,4 @@
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 use crate::{crops::crop_registry, models::FarmState, persistence};
 use humantime::format_duration;
@@ -166,19 +166,23 @@ impl App {
     }
 
     fn keybinds(&mut self) -> std::io::Result<()> {
-        match event::read()? {
-            Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
-                match key_event.code {
-                    KeyCode::Char('q') => {
-                        persistence::save_farm(&self.farm);
-                        self.running = false
+        let tick_rate = Duration::from_secs(1);
+
+        if event::poll(tick_rate)? {
+            match event::read()? {
+                Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
+                    match key_event.code {
+                        KeyCode::Char('q') => {
+                            persistence::save_farm(&self.farm);
+                            self.running = false
+                        }
+                        KeyCode::Tab => self.tab(false),
+                        KeyCode::BackTab => self.tab(true),
+                        _ => {}
                     }
-                    KeyCode::Tab => self.tab(false),
-                    KeyCode::BackTab => self.tab(true),
-                    _ => {}
                 }
+                _ => {}
             }
-            _ => {}
         }
 
         Ok(())
