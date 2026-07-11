@@ -1,20 +1,23 @@
 use std::time::Duration;
 
-use crate::{crops::crop_registry, harvest_cmd, models::FarmState, persistence, plot_pricing::next_plot_price};
+use crate::{
+    crops::crop_registry, harvest_cmd, models::FarmState, persistence,
+    plot_pricing::next_plot_price,
+};
 use humantime::format_duration;
-use ratatui_notifications::{Notification, Notifications, Level};
 use ratatui::{
-    DefaultTerminal, Frame,
     crossterm::event::{self, Event, KeyCode, KeyEventKind},
     layout::{Constraint, Direction, Layout},
     prelude::Stylize,
+    style::{Color, Style},
     text::Line,
     widgets::{Block, BorderType, Borders, Paragraph, Wrap},
-    style::{Color, Style}
+    DefaultTerminal, Frame,
 };
+use ratatui_notifications::{Level, Notification, Notifications};
 
 static NAVIGATION_TEXT: &str =
-    " Move <Up/Down/Left/Right>, Change Tabs: <Tab/Shift+Tab>, Quit <q> ";
+    " Change Tabs: <Tab/Shift+Tab>, Quit <q> ";
 
 pub fn run() {
     let _ = ratatui::run(|terminal| App::new().run(terminal));
@@ -119,12 +122,11 @@ impl App {
                     inventory_seed_constraints.push(Constraint::Length(8));
                 }
                 for seed in seeds {
-                    inventory_seed_constraints.push(Constraint::Fill(
-                        100 / seeds.iter().count() as u16
-                    ))
+                    inventory_seed_constraints
+                        .push(Constraint::Fill(100 / seeds.iter().count() as u16))
                 }
             }
-            None => inventory_seed_constraints.push(Constraint::Length(8))
+            None => inventory_seed_constraints.push(Constraint::Length(8)),
         }
 
         match &self.farm.inventory.crops {
@@ -133,12 +135,11 @@ impl App {
                     inventory_crop_constraints.push(Constraint::Length(8));
                 }
                 for crop in crops {
-                    inventory_crop_constraints.push(Constraint::Fill(
-                        100 / crops.iter().count() as u16
-                    ))
+                    inventory_crop_constraints
+                        .push(Constraint::Fill(100 / crops.iter().count() as u16))
                 }
             }
-            None => inventory_crop_constraints.push(Constraint::Length(8))
+            None => inventory_crop_constraints.push(Constraint::Length(8)),
         }
 
         let inventory_main_layout = Layout::default()
@@ -151,10 +152,7 @@ impl App {
             .split(master_layout[1]);
         let inventory_seeds_container = Layout::default()
             .direction(Direction::Vertical)
-            .constraints(vec![
-                Constraint::Length(1),
-                Constraint::Fill(1),
-            ])
+            .constraints(vec![Constraint::Length(1), Constraint::Fill(1)])
             .split(inventory_main_layout[1]);
         let inventory_seeds_layout_vertical = Layout::default()
             .direction(Direction::Vertical)
@@ -167,10 +165,7 @@ impl App {
 
         let inventory_crops_container = Layout::default()
             .direction(Direction::Vertical)
-            .constraints(vec![
-                Constraint::Length(1),
-                Constraint::Fill(1),
-            ])
+            .constraints(vec![Constraint::Length(1), Constraint::Fill(1)])
             .split(inventory_main_layout[2]);
         let inventory_crops_layout_vertical = Layout::default()
             .direction(Direction::Vertical)
@@ -190,7 +185,10 @@ impl App {
                             .border_style(Style::default().fg(Color::Green))
                             .border_type(BorderType::Thick)
                             .title_top(" termfarm ")
-                            .title_bottom(Line::from(" Harvest <h>,".to_string() + NAVIGATION_TEXT).right_aligned()),
+                            .title_bottom(
+                                Line::from(" Harvest <h>,".to_string() + NAVIGATION_TEXT)
+                                    .right_aligned(),
+                            ),
                     ),
                     master_layout[0],
                 );
@@ -237,14 +235,19 @@ impl App {
                             );
 
                             new_pos += 1
-                        },
+                        }
                     };
                 }
                 frame.render_widget(
-                    Paragraph::new(format!("+\nBuy a new plot for {} coins", next_plot_price(self.farm.plots.len() as u16))).block(
+                    Paragraph::new(format!(
+                        "+\nBuy a new plot for {} coins",
+                        next_plot_price(self.farm.plots.len() as u16)
+                    ))
+                    .block(
                         Block::new()
                             .borders(Borders::ALL)
-                            .border_style(Style::default()).fg(Color::Green)
+                            .border_style(Style::default())
+                            .fg(Color::Green)
                             .border_type(BorderType::Thick),
                     )
                     .wrap(Wrap { trim: true }),
@@ -268,21 +271,21 @@ impl App {
                         Block::new()
                             .borders(Borders::ALL)
                             .border_style(Style::default().fg(Color::Yellow))
-                            .border_type(BorderType::Double)
+                            .border_type(BorderType::Double),
                     ),
-                    inventory_main_layout[0]
+                    inventory_main_layout[0],
                 );
                 match &self.farm.inventory.seeds {
                     Some(seeds) => {
                         frame.render_widget(
                             Paragraph::new("").block(
-                            Block::new()
-                                  .borders(Borders::ALL)
-                                  .border_style(Style::default().fg(Color::Cyan))
-                                  .border_type(BorderType::Double)
-                                  .title_top(" 󰹢 Seeds: ")
+                                Block::new()
+                                    .borders(Borders::ALL)
+                                    .border_style(Style::default().fg(Color::Cyan))
+                                    .border_type(BorderType::Double)
+                                    .title_top(" 󰹢 Seeds: "),
                             ),
-                            inventory_seeds_container[0]
+                            inventory_seeds_container[0],
                         );
                         if seeds.is_empty() {
                             frame.render_widget(
@@ -290,9 +293,9 @@ impl App {
                                     Block::new()
                                         .borders(Borders::ALL)
                                         .border_style(Style::default().fg(Color::Gray))
-                                        .border_type(BorderType::Double)
+                                        .border_type(BorderType::Double),
                                 ),
-                                inventory_seeds_layout_horizontal[0]
+                                inventory_seeds_layout_horizontal[0],
                             );
                         }
                         let mut sorted: Vec<(&String, &u16)> = seeds.iter().collect::<Vec<_>>();
@@ -300,13 +303,17 @@ impl App {
                         for (i, (seed, amount)) in sorted.iter().enumerate() {
                             let registry = crop_registry();
                             frame.render_widget(
-                                Paragraph::new(format!("{} {amount}x {seed}", registry[*seed].icon)).block(
+                                Paragraph::new(format!(
+                                    "{} {amount}x {seed}",
+                                    registry[*seed].icon
+                                ))
+                                .block(
                                     Block::new()
                                         .borders(Borders::ALL)
                                         .border_style(Style::default().fg(Color::Cyan))
-                                        .border_type(BorderType::Double)
+                                        .border_type(BorderType::Double),
                                 ),
-                                inventory_seeds_layout_horizontal[i]
+                                inventory_seeds_layout_horizontal[i],
                             );
                         }
                     }
@@ -316,9 +323,9 @@ impl App {
                                 Block::new()
                                     .borders(Borders::ALL)
                                     .border_style(Style::default().fg(Color::Gray))
-                                    .border_type(BorderType::Double)
+                                    .border_type(BorderType::Double),
                             ),
-                            inventory_seeds_layout_horizontal[0]
+                            inventory_seeds_layout_horizontal[0],
                         );
                     }
                 }
@@ -326,13 +333,13 @@ impl App {
                     Some(crops) => {
                         frame.render_widget(
                             Paragraph::new("").block(
-                            Block::new()
-                                  .borders(Borders::ALL)
-                                  .border_style(Style::default().fg(Color::Cyan))
-                                  .border_type(BorderType::Double)
-                                  .title_top("  Crops: ")
+                                Block::new()
+                                    .borders(Borders::ALL)
+                                    .border_style(Style::default().fg(Color::Cyan))
+                                    .border_type(BorderType::Double)
+                                    .title_top("  Crops: "),
                             ),
-                            inventory_crops_container[0]
+                            inventory_crops_container[0],
                         );
                         if crops.is_empty() {
                             frame.render_widget(
@@ -340,9 +347,9 @@ impl App {
                                     Block::new()
                                         .borders(Borders::ALL)
                                         .border_style(Style::default().fg(Color::Gray))
-                                        .border_type(BorderType::Double)
+                                        .border_type(BorderType::Double),
                                 ),
-                                inventory_crops_layout_horizontal[0]
+                                inventory_crops_layout_horizontal[0],
                             );
                         }
                         let mut sorted: Vec<(&String, &u16)> = crops.iter().collect::<Vec<_>>();
@@ -350,13 +357,17 @@ impl App {
                         for (i, (crop, amount)) in sorted.iter().enumerate() {
                             let registry = crop_registry();
                             frame.render_widget(
-                                Paragraph::new(format!("{} {amount}x {crop}", registry[*crop].icon)).block(
+                                Paragraph::new(format!(
+                                    "{} {amount}x {crop}",
+                                    registry[*crop].icon
+                                ))
+                                .block(
                                     Block::new()
                                         .borders(Borders::ALL)
                                         .border_style(Style::default().fg(Color::Cyan))
-                                        .border_type(BorderType::Double)
+                                        .border_type(BorderType::Double),
                                 ),
-                                inventory_crops_layout_horizontal[i]
+                                inventory_crops_layout_horizontal[i],
                             );
                         }
                     }
@@ -366,13 +377,13 @@ impl App {
                                 Block::new()
                                     .borders(Borders::ALL)
                                     .border_style(Style::default().fg(Color::Gray))
-                                    .border_type(BorderType::Double)
+                                    .border_type(BorderType::Double),
                             ),
-                            inventory_crops_layout_horizontal[0]
+                            inventory_crops_layout_horizontal[0],
                         );
                     }
                 }
-            },
+            }
             Tabs::Market => frame.render_widget(
                 Paragraph::new("Farm | Inventory | [Market]").block(
                     Block::new()
