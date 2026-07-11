@@ -8,6 +8,7 @@ mod models;
 mod persistence;
 mod plot_pricing;
 mod stats;
+mod tui;
 
 mod buy_cmd;
 mod buyplot_cmd;
@@ -63,7 +64,7 @@ enum Commands {
 
 fn main() {
     if std::env::args().count() == 1 {
-        // TODO: run egui UI
+        tui::run();
         exit(0)
     }
 
