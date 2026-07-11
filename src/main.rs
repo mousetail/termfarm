@@ -87,7 +87,7 @@ fn main() {
             plant_cmd::plant(seed_id.to_string());
         }
         Commands::Harvest => {
-            harvest_cmd::harvest();
+            harvest_cmd::harvest(true);
         }
         Commands::Inventory => {
             inventory_cmd::inventory();

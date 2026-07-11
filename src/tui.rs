@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use crate::{crops::crop_registry, models::FarmState, persistence};
+use crate::{crops::crop_registry, harvest_cmd, models::FarmState, persistence};
 use humantime::format_duration;
 use ratatui::{
     DefaultTerminal, Frame,
@@ -102,7 +102,7 @@ impl App {
                             .borders(Borders::ALL)
                             .border_type(BorderType::Thick)
                             .title_top(" termfarm ")
-                            .title_bottom(Line::from(NAVIGATION_TEXT).right_aligned()),
+                            .title_bottom(Line::from(" Harvest <h>,".to_string() + NAVIGATION_TEXT).right_aligned()),
                     ),
                     master_layout[0],
                 );
@@ -178,6 +178,9 @@ impl App {
                         }
                         KeyCode::Tab => self.tab(false),
                         KeyCode::BackTab => self.tab(true),
+                        KeyCode::Char('h') if self.active_tab == Tabs::Farm => {
+                            harvest_cmd::harvest(false);
+                        }
                         _ => {}
                     }
                 }
