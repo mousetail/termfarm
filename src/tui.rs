@@ -2,12 +2,15 @@ use std::time::Duration;
 
 use crate::{crops::crop_registry, harvest_cmd, models::FarmState, persistence};
 use humantime::format_duration;
+use ratatui_notifications::{Notification, Notifications, Level};
 use ratatui::{
     DefaultTerminal, Frame,
     crossterm::event::{self, Event, KeyCode, KeyEventKind},
     layout::{Constraint, Direction, Layout},
+    prelude::Stylize,
     text::Line,
     widgets::{Block, BorderType, Borders, Paragraph, Wrap},
+    style::{Color, Style}
 };
 
 static NAVIGATION_TEXT: &str =
@@ -28,6 +31,7 @@ pub struct App {
     active_tab: Tabs,
     running: bool,
     farm: FarmState,
+    notifications: Notifications,
 }
 
 impl App {
@@ -36,6 +40,7 @@ impl App {
             active_tab: Tabs::Farm,
             running: true,
             farm: persistence::load_farm(),
+            notifications: Notifications::new(),
         }
     }
 
@@ -58,7 +63,9 @@ impl App {
 
     pub fn run(&mut self, terminal: &mut DefaultTerminal) -> std::io::Result<()> {
         while self.running {
-            terminal.draw(|frame| self.draw(frame))?;
+            terminal.draw(|frame| {
+                self.draw(frame);
+            })?;
             self.keybinds()?;
         }
 
@@ -100,6 +107,7 @@ impl App {
                     Paragraph::new("[Farm] | Inventory | Market").block(
                         Block::new()
                             .borders(Borders::ALL)
+                            .border_style(Style::default().fg(Color::Green))
                             .border_type(BorderType::Thick)
                             .title_top(" termfarm ")
                             .title_bottom(Line::from(" Harvest <h>,".to_string() + NAVIGATION_TEXT).right_aligned()),
@@ -132,9 +140,10 @@ impl App {
                             )
                         }
                         None => frame.render_widget(
-                            Paragraph::new("<empty>").block(
+                            Paragraph::new("<empty>".gray()).block(
                                 Block::new()
                                     .borders(Borders::ALL)
+                                    .border_style(Style::default().fg(Color::Gray))
                                     .border_type(BorderType::Double),
                             ),
                             farm_horizontal_layout[i],
@@ -146,6 +155,7 @@ impl App {
                 Paragraph::new("Farm | [Inventory] | Market").block(
                     Block::new()
                         .borders(Borders::ALL)
+                        .border_style(Style::default().fg(Color::Green))
                         .border_type(BorderType::Thick)
                         .title_top(" termfarm ")
                         .title_bottom(Line::from(NAVIGATION_TEXT).right_aligned()),
@@ -156,6 +166,7 @@ impl App {
                 Paragraph::new("Farm | Inventory | [Market]").block(
                     Block::new()
                         .borders(Borders::ALL)
+                        .border_style(Style::default().fg(Color::Green))
                         .border_type(BorderType::Thick)
                         .title_top(" termfarm ")
                         .title_bottom(Line::from(NAVIGATION_TEXT).right_aligned()),
@@ -163,10 +174,13 @@ impl App {
                 master_layout[0],
             ),
         }
+
+        self.notifications.tick(Duration::from_millis(16));
+        self.notifications.render(frame, frame.area());
     }
 
     fn keybinds(&mut self) -> std::io::Result<()> {
-        let tick_rate = Duration::from_secs(1);
+        let tick_rate = Duration::from_millis(1);
 
         if event::poll(tick_rate)? {
             match event::read()? {
@@ -179,7 +193,14 @@ impl App {
                         KeyCode::Tab => self.tab(false),
                         KeyCode::BackTab => self.tab(true),
                         KeyCode::Char('h') if self.active_tab == Tabs::Farm => {
-                            harvest_cmd::harvest(false);
+                            let text = harvest_cmd::harvest(false);
+                            let notif = Notification::new(text)
+                                .title("󱕓 Harvested:")
+                                .level(Level::Info)
+                                .build()
+                                .unwrap();
+
+                            self.notifications.add(notif).unwrap();
                         }
                         _ => {}
                     }
