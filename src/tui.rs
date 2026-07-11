@@ -127,6 +127,20 @@ impl App {
             None => inventory_seed_constraints.push(Constraint::Length(8))
         }
 
+        match &self.farm.inventory.crops {
+            Some(crops) => {
+                if crops.is_empty() {
+                    inventory_crop_constraints.push(Constraint::Length(8));
+                }
+                for crop in crops {
+                    inventory_crop_constraints.push(Constraint::Fill(
+                        100 / crops.iter().count() as u16
+                    ))
+                }
+            }
+            None => inventory_crop_constraints.push(Constraint::Length(8))
+        }
+
         let inventory_main_layout = Layout::default()
             .direction(Direction::Vertical)
             .constraints(vec![
@@ -150,6 +164,22 @@ impl App {
             .direction(Direction::Horizontal)
             .constraints(&inventory_seed_constraints)
             .split(inventory_seeds_layout_vertical[0]);
+
+        let inventory_crops_container = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints(vec![
+                Constraint::Length(1),
+                Constraint::Fill(1),
+            ])
+            .split(inventory_main_layout[2]);
+        let inventory_crops_layout_vertical = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints(&inventory_crop_constraints)
+            .split(inventory_crops_container[1]);
+        let inventory_crops_layout_horizontal = Layout::default()
+            .direction(Direction::Horizontal)
+            .constraints(&inventory_crop_constraints)
+            .split(inventory_crops_layout_vertical[0]);
 
         match self.active_tab {
             Tabs::Farm => {
@@ -289,6 +319,56 @@ impl App {
                                     .border_type(BorderType::Double)
                             ),
                             inventory_seeds_layout_horizontal[0]
+                        );
+                    }
+                }
+                match &self.farm.inventory.crops {
+                    Some(crops) => {
+                        frame.render_widget(
+                            Paragraph::new("").block(
+                            Block::new()
+                                  .borders(Borders::ALL)
+                                  .border_style(Style::default().fg(Color::Cyan))
+                                  .border_type(BorderType::Double)
+                                  .title_top("  Crops: ")
+                            ),
+                            inventory_crops_container[0]
+                        );
+                        if crops.is_empty() {
+                            frame.render_widget(
+                                Paragraph::new("<none>".gray()).block(
+                                    Block::new()
+                                        .borders(Borders::ALL)
+                                        .border_style(Style::default().fg(Color::Gray))
+                                        .border_type(BorderType::Double)
+                                ),
+                                inventory_crops_layout_horizontal[0]
+                            );
+                        }
+                        let mut sorted: Vec<(&String, &u16)> = crops.iter().collect::<Vec<_>>();
+                        sorted.sort_by(|a, b| a.0.cmp(&b.0));
+                        for (i, (crop, amount)) in sorted.iter().enumerate() {
+                            let registry = crop_registry();
+                            frame.render_widget(
+                                Paragraph::new(format!("{} {amount}x {crop}", registry[*crop].icon)).block(
+                                    Block::new()
+                                        .borders(Borders::ALL)
+                                        .border_style(Style::default().fg(Color::Cyan))
+                                        .border_type(BorderType::Double)
+                                ),
+                                inventory_crops_layout_horizontal[i]
+                            );
+                        }
+                    }
+                    None => {
+                        frame.render_widget(
+                            Paragraph::new("<none>".gray()).block(
+                                Block::new()
+                                    .borders(Borders::ALL)
+                                    .border_style(Style::default().fg(Color::Gray))
+                                    .border_type(BorderType::Double)
+                            ),
+                            inventory_crops_layout_horizontal[0]
                         );
                     }
                 }
