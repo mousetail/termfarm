@@ -1,23 +1,16 @@
+use crate::{models::FarmState, persistence};
 use ratatui::{
-    DefaultTerminal,
-    Frame,
-    widgets::{Paragraph, Block},
-    layout::{
-        Constraint,
-        Direction,
-        Layout
-    },
-    crossterm::event::{
-        self,
-        Event,
-        KeyCode,
-        KeyEventKind
-    },
+    DefaultTerminal, Frame,
+    crossterm::event::{self, Event, KeyCode, KeyEventKind},
+    layout::{Constraint, Direction, Layout},
+    text::Line,
+    widgets::{Block, BorderType, Borders, Paragraph},
 };
-use crate::models::FarmState;
+
+static NAVIGATION_TEXT: &str = " Move <Up/Down/Left/Right>, Change Tabs: <Tab/Shift+Tab> ";
 
 pub fn run() {
-    ratatui::run(|terminal| App::new().run(terminal));
+    let _ = ratatui::run(|terminal| App::new().run(terminal));
 }
 
 #[derive(PartialEq)]
@@ -30,7 +23,7 @@ enum Tabs {
 pub struct App {
     active_tab: Tabs,
     running: bool,
-    farm:
+    farm: FarmState,
 }
 
 impl App {
@@ -38,6 +31,7 @@ impl App {
         Self {
             active_tab: Tabs::Farm,
             running: true,
+            farm: persistence::load_farm(),
         }
     }
 
@@ -50,11 +44,11 @@ impl App {
             Tabs::Inventory => match reverse {
                 true => self.active_tab = Tabs::Farm,
                 false => self.active_tab = Tabs::Market,
-            }
+            },
             Tabs::Market => match reverse {
                 true => self.active_tab = Tabs::Inventory,
                 false => self.active_tab = Tabs::Farm,
-            }
+            },
         }
     }
 
@@ -68,32 +62,50 @@ impl App {
     }
 
     fn draw(&self, frame: &mut Frame) {
-        let layout = Layout::default()
+        let master_layout = Layout::default()
             .direction(Direction::Vertical)
-            .constraints(vec![
-                Constraint::Fill(1),
-            ])
+            .constraints(vec![Constraint::Length(3)])
             .split(frame.area());
 
         match self.active_tab {
             Tabs::Farm => {
                 frame.render_widget(
-                    Paragraph::new("[Farm] | Inventory | Market"),
-                    layout[0]
+                    Paragraph::new("[Farm] | Inventory | Market").block(
+                        Block::new()
+                            .borders(Borders::ALL)
+                            .border_type(BorderType::Thick)
+                            .title_top(" termfarm ")
+                            .title_bottom(
+                                Line::from("".to_string() + &NAVIGATION_TEXT).right_aligned(),
+                            ),
+                    ),
+                    master_layout[0],
                 );
-            },
-            Tabs::Inventory => {
-                frame.render_widget(
-                    Paragraph::new("Farm | [Inventory] | Market"),
-                    layout[0]
-                )
-            },
-            Tabs::Market => {
-                frame.render_widget(
-                    Paragraph::new("Farm | Inventory | [Market]"),
-                    layout[0]
-                )
-            },
+            }
+            Tabs::Inventory => frame.render_widget(
+                Paragraph::new("Farm | [Inventory] | Market").block(
+                    Block::new()
+                        .borders(Borders::ALL)
+                        .border_type(BorderType::Thick)
+                        .title_top(" termfarm ")
+                        .title_bottom(
+                            Line::from("".to_string() + &NAVIGATION_TEXT).right_aligned(),
+                        ),
+                ),
+                master_layout[0],
+            ),
+            Tabs::Market => frame.render_widget(
+                Paragraph::new("Farm | Inventory | [Market]").block(
+                    Block::new()
+                        .borders(Borders::ALL)
+                        .border_type(BorderType::Thick)
+                        .title_top(" termfarm ")
+                        .title_bottom(
+                            Line::from("".to_string() + &NAVIGATION_TEXT).right_aligned(),
+                        ),
+                ),
+                master_layout[0],
+            ),
         }
     }
 
@@ -101,10 +113,13 @@ impl App {
         match event::read()? {
             Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
                 match key_event.code {
-                    KeyCode::Char('q') => self.running = false,
+                    KeyCode::Char('q') => {
+                        persistence::save_farm(&self.farm);
+                        self.running = false
+                    }
                     KeyCode::Tab => self.tab(false),
                     KeyCode::BackTab => self.tab(true),
-                    _ => {},
+                    _ => {}
                 }
             }
             _ => {}
