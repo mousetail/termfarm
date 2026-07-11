@@ -1,10 +1,13 @@
+use std::time::Duration;
+
 use crate::{crops::crop_registry, models::FarmState, persistence};
+use humantime::format_duration;
 use ratatui::{
     DefaultTerminal, Frame,
     crossterm::event::{self, Event, KeyCode, KeyEventKind},
     layout::{Constraint, Direction, Layout},
     text::Line,
-    widgets::{Block, BorderType, Borders, Paragraph},
+    widgets::{Block, BorderType, Borders, Paragraph, Wrap},
 };
 
 static NAVIGATION_TEXT: &str = " Move <Up/Down/Left/Right>, Change Tabs: <Tab/Shift+Tab> ";
@@ -106,14 +109,26 @@ impl App {
                 );
                 for (i, plot) in self.farm.plots.iter().enumerate() {
                     match plot.planted_crop.clone() {
-                        Some(crop) => {
-                            let text = format!("{} {}", crop, &registry[&crop].icon);
+                        Some(crop_id) => {
+                            let crop = &registry[&crop_id];
+                            let elapsed = plot.planted_at.unwrap().elapsed().unwrap();
+                            let remaining = crop.grow_time as i64 - elapsed.as_secs() as i64;
+
+                            let dur = if remaining <= 0 {
+                                "ready to harvest".to_string()
+                            } else {
+                                format_duration(Duration::from_secs(remaining as u64)).to_string()
+                                    + " remaining"
+                            };
+                            let text = format!("{} {}\n{}", crop.id, crop.icon, dur,);
                             frame.render_widget(
-                                Paragraph::new(text).block(
-                                    Block::new()
-                                        .borders(Borders::ALL)
-                                        .border_type(BorderType::Double),
-                                ),
+                                Paragraph::new(text)
+                                    .block(
+                                        Block::new()
+                                            .borders(Borders::ALL)
+                                            .border_type(BorderType::Double),
+                                    )
+                                    .wrap(Wrap { trim: true }),
                                 farm_horizontal_layout[i],
                             )
                         }
