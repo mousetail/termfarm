@@ -1,3 +1,5 @@
+use std::process::exit;
+
 use clap::{Parser, Subcommand};
 
 mod crops;
@@ -60,6 +62,11 @@ enum Commands {
 }
 
 fn main() {
+    if std::env::args().count() == 1 {
+        // TODO: run egui UI
+        exit(0)
+    }
+
     let cli = Cli::parse();
 
     match &cli.command {
