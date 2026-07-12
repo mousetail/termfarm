@@ -82,7 +82,7 @@ fn main() {
             market_cmd::market();
         }
         Commands::Buy { seed_id, amount } => {
-            buy_cmd::buy(seed_id.to_string(), *amount);
+            buy_cmd::buy(seed_id.to_string(), *amount, true);
         }
         Commands::Plant { seed_id } => {
             plant_cmd::plant(seed_id.to_string());

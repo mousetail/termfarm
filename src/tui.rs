@@ -1,8 +1,8 @@
 use std::{collections::HashMap, time::Duration};
 
 use crate::{
-    crops::crop_registry, harvest_cmd, market::buy_price, models::FarmState, persistence,
-    plot_pricing::next_plot_price, sell::sell_crop, stats::compute_stats,
+    buy_cmd::buy, crops::crop_registry, harvest_cmd, market::buy_price, models::FarmState,
+    persistence, plot_pricing::next_plot_price, sell::sell_crop, stats::compute_stats,
 };
 use humantime::format_duration;
 use ratatui::{
@@ -541,6 +541,21 @@ impl App {
                                     self.notifications.add(notif).unwrap();
                                 }
                             }
+                        }
+                        KeyCode::Char('1') if self.active_tab == Tabs::Market => {
+                            let output = buy(self.farm.market.available_seeds[0].clone(), 1, false);
+                            let notif = Notification::new(output).title(" Bought").build().unwrap();
+                            self.notifications.add(notif).unwrap();
+                        }
+                        KeyCode::Char('2') if self.active_tab == Tabs::Market => {
+                            let output = buy(self.farm.market.available_seeds[1].clone(), 1, false);
+                            let notif = Notification::new(output).title(" Bought").build().unwrap();
+                            self.notifications.add(notif).unwrap();
+                        }
+                        KeyCode::Char('3') if self.active_tab == Tabs::Market => {
+                            let output = buy(self.farm.market.available_seeds[2].clone(), 1, false);
+                            let notif = Notification::new(output).title(" Bought").build().unwrap();
+                            self.notifications.add(notif).unwrap();
                         }
                         _ => {}
                     }
