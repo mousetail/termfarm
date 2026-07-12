@@ -209,7 +209,7 @@ impl App {
                             .title_top(" termfarm ")
                             .title_bottom(
                                 Line::from(
-                                    " Harvest <h>, Buy new Plot <p>,".to_string() + NAVIGATION_TEXT,
+                                    " Harvest <h>, Buy new Plot <n>,".to_string() + NAVIGATION_TEXT,
                                 )
                                 .right_aligned(),
                             ),
@@ -568,7 +568,7 @@ impl App {
                             let notif = Notification::new(output).title(" Bought").build().unwrap();
                             self.notifications.add(notif).unwrap();
                         }
-                        KeyCode::Char('p') if self.active_tab == Tabs::Farm => {
+                        KeyCode::Char('n') if self.active_tab == Tabs::Farm => {
                             let current_plots = self.farm.plots.len();
                             let price = next_plot_price(current_plots as u16);
 
