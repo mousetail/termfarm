@@ -1,8 +1,19 @@
-use std::{collections::HashMap, time::Duration};
+use std::{
+    collections::HashMap,
+    process::exit,
+    time::{Duration, SystemTime},
+};
 
 use crate::{
-    buy_cmd::buy, crops::crop_registry, harvest_cmd, market::buy_price, models::FarmState,
-    persistence, plot_pricing::next_plot_price, sell::sell_crop, stats::compute_stats,
+    buy_cmd::buy,
+    crops::crop_registry,
+    harvest_cmd,
+    market::buy_price,
+    models::{FarmState, Plot},
+    persistence::{self, save_farm},
+    plot_pricing::next_plot_price,
+    sell::sell_crop,
+    stats::compute_stats,
 };
 use humantime::format_duration;
 use ratatui::{
@@ -15,6 +26,7 @@ use ratatui::{
     widgets::{Block, BorderType, Borders, Paragraph, Wrap},
 };
 use ratatui_notifications::{Level, Notification, Notifications};
+use uuid::Uuid;
 
 static NAVIGATION_TEXT: &str = " Change Tabs: <Tab/Shift+Tab>, Quit <q> ";
 
@@ -199,8 +211,10 @@ impl App {
                             .border_type(BorderType::Thick)
                             .title_top(" termfarm ")
                             .title_bottom(
-                                Line::from(" Harvest <h>,".to_string() + NAVIGATION_TEXT)
-                                    .right_aligned(),
+                                Line::from(
+                                    " Harvest <h>, Buy new Plot <p>,".to_string() + NAVIGATION_TEXT,
+                                )
+                                .right_aligned(),
                             ),
                     ),
                     master_layout[0],
@@ -556,6 +570,36 @@ impl App {
                             let output = buy(self.farm.market.available_seeds[2].clone(), 1, false);
                             let notif = Notification::new(output).title(" Bought").build().unwrap();
                             self.notifications.add(notif).unwrap();
+                        }
+                        KeyCode::Char('p') if self.active_tab == Tabs::Farm => {
+                            let current_plots = self.farm.plots.len();
+                            let price = next_plot_price(current_plots as u16);
+
+                            if self.farm.coins < price as u32 {
+                                let notif =
+                                    Notification::new("Not enough coins to purchase a new plot!")
+                                        .title(" Not enough coins")
+                                        .level(Level::Warn)
+                                        .build()
+                                        .unwrap();
+                                self.notifications.add(notif).unwrap();
+                            } else {
+                                self.farm.coins -= price as u32;
+                                self.farm.plots.push(Plot {
+                                    id: Uuid::new_v4(),
+                                    planted_crop: None,
+                                    planted_at: None,
+                                });
+                                self.farm.last_updated = SystemTime::now();
+
+                                match save_farm(&self.farm) {
+                                    true => (),
+                                    false => {
+                                        usefulog::err("Failed to save farm");
+                                        exit(1);
+                                    }
+                                }
+                            }
                         }
                         _ => {}
                     }
