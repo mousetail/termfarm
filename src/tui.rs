@@ -1,18 +1,18 @@
-use std::time::Duration;
+use std::{collections::HashMap, time::Duration};
 
 use crate::{
     crops::crop_registry, harvest_cmd, models::FarmState, persistence,
-    plot_pricing::next_plot_price,
+    plot_pricing::next_plot_price, sell::sell_crop,
 };
 use humantime::format_duration;
 use ratatui::{
+    DefaultTerminal, Frame,
     crossterm::event::{self, Event, KeyCode, KeyEventKind},
     layout::{Constraint, Direction, Layout},
     prelude::Stylize,
     style::{Color, Style},
     text::Line,
     widgets::{Block, BorderType, Borders, Paragraph, Wrap},
-    DefaultTerminal, Frame,
 };
 use ratatui_notifications::{Level, Notification, Notifications};
 
@@ -176,6 +176,7 @@ impl App {
             .split(inventory_crops_layout_vertical[0]);
 
         match self.active_tab {
+            // MARK: Farm tab rendering
             Tabs::Farm => {
                 frame.render_widget(
                     Paragraph::new("[Farm] | Inventory | Market").block(
@@ -253,6 +254,7 @@ impl App {
                     farm_horizontal_layout[new_pos],
                 )
             }
+            // MARK: Inventory tab rendering
             Tabs::Inventory => {
                 frame.render_widget(
                     Paragraph::new("Farm | [Inventory] | Market").block(
@@ -261,7 +263,10 @@ impl App {
                             .border_style(Style::default().fg(Color::Green))
                             .border_type(BorderType::Thick)
                             .title_top(" termfarm ")
-                            .title_bottom(Line::from(NAVIGATION_TEXT).right_aligned()),
+                            .title_bottom(
+                                Line::from(" Sell crops <s>,".to_string() + NAVIGATION_TEXT)
+                                    .right_aligned(),
+                            ),
                     ),
                     master_layout[0],
                 );
@@ -383,6 +388,7 @@ impl App {
                     }
                 }
             }
+            // MARK: Market tab rendering
             Tabs::Market => frame.render_widget(
                 Paragraph::new("Farm | Inventory | [Market]").block(
                     Block::new()
@@ -422,6 +428,25 @@ impl App {
                                 .unwrap();
 
                             self.notifications.add(notif).unwrap();
+                        }
+                        KeyCode::Char('s') if self.active_tab == Tabs::Inventory => {
+                            let crops = self.farm.inventory.crops.get_or_insert_with(HashMap::new);
+                            if crops.is_empty() {
+                                let notif = Notification::new("You don't have any crops to sell")
+                                    .title(" No crops to sell!")
+                                    .level(Level::Warn)
+                                    .build()
+                                    .unwrap();
+
+                                self.notifications.add(notif).unwrap();
+                            } else {
+                                for (crop_id, amount) in crops {
+                                    let output = sell_crop(crop_id.to_string(), *amount, false);
+                                    let notif =
+                                        Notification::new(output).title(" Sold").build().unwrap();
+                                    self.notifications.add(notif).unwrap();
+                                }
+                            }
                         }
                         _ => {}
                     }
