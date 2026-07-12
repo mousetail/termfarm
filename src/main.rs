@@ -1,6 +1,8 @@
-use std::process::exit;
+use std::{fs, process::exit};
 
 use clap::{Parser, Subcommand};
+
+use crate::persistence::save_path;
 
 mod crops;
 mod market;
@@ -65,6 +67,10 @@ enum Commands {
 
 fn main() {
     if std::env::args().count() == 1 {
+        if !fs::exists(save_path()).unwrap() {
+            init_cmd::init();
+        }
+
         tui::run();
         exit(0)
     }
