@@ -7,6 +7,7 @@ mod market;
 mod models;
 mod persistence;
 mod plot_pricing;
+mod sell;
 mod stats;
 mod tui;
 
