@@ -1,11 +1,17 @@
+use std::{fs, process::exit};
+
 use clap::{Parser, Subcommand};
+
+use crate::persistence::save_path;
 
 mod crops;
 mod market;
 mod models;
 mod persistence;
 mod plot_pricing;
+mod sell;
 mod stats;
+mod tui;
 
 mod buy_cmd;
 mod buyplot_cmd;
@@ -60,6 +66,15 @@ enum Commands {
 }
 
 fn main() {
+    if std::env::args().count() == 1 {
+        if !fs::exists(save_path()).unwrap() {
+            init_cmd::init();
+        }
+
+        tui::run();
+        exit(0)
+    }
+
     let cli = Cli::parse();
 
     match &cli.command {
@@ -73,13 +88,13 @@ fn main() {
             market_cmd::market();
         }
         Commands::Buy { seed_id, amount } => {
-            buy_cmd::buy(seed_id.to_string(), *amount);
+            buy_cmd::buy(seed_id.to_string(), *amount, true);
         }
         Commands::Plant { seed_id } => {
-            plant_cmd::plant(seed_id.to_string());
+            plant_cmd::plant(seed_id.to_string(), true);
         }
         Commands::Harvest => {
-            harvest_cmd::harvest();
+            harvest_cmd::harvest(true);
         }
         Commands::Inventory => {
             inventory_cmd::inventory();

@@ -5,7 +5,7 @@ use crate::{
     persistence::{load_farm, save_farm},
 };
 
-pub fn harvest() {
+pub fn harvest(interactive: bool) -> String {
     let mut farm = load_farm();
     let registry = crop_registry();
 
@@ -44,12 +44,26 @@ pub fn harvest() {
     farm.last_updated = SystemTime::now();
     match save_farm(&farm) {
         true => {
-            if harvested.is_empty() {
-                println!(" No crops to harvest");
+            if interactive {
+                if harvested.is_empty() {
+                    println!(" No crops to harvest");
+                    "".to_string()
+                } else {
+                    println!("󱕓 Harvested:");
+                    for (crop, amount) in harvested {
+                        println!(" +{amount} {crop}")
+                    }
+                    "".to_string()
+                }
             } else {
-                println!("󱕓 Harvested:");
-                for (crop, amount) in harvested {
-                    println!(" +{amount} {crop}")
+                if harvested.is_empty() {
+                    " No crops to harvest".to_string()
+                } else {
+                    let mut content = String::new();
+                    for (crop, amount) in harvested {
+                        content.push_str(format!("+ {amount} {crop}\n").as_str());
+                    }
+                    content
                 }
             }
         }
