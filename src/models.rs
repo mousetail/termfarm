@@ -38,4 +38,5 @@ pub struct FarmState {
     pub inventory: Inventory,
     pub market: MarketState,
     pub last_updated: SystemTime,
+    pub has_seen_tutorial: bool,
 }
